@@ -6,20 +6,20 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 
 function App() {
-  const [achievements, setAchievements] = useState([]); // Начальное значение — 0
+  const [wins, setWins] = useState([]);
 
-  const addAchievement = () => {
-    setAchievements(achievements + text);
-    clearText(); //
+  const addWin = () => {
+    setWins(wins + text);
+    clearText();
   };
 
-  const [text, setText] = useState(""); // Начальное состояние пустое
+  const [text, setText] = useState("");
 
   const handleChange = (event) => {
-    setText(event.target.value); // Обновляем состояние на основе ввода
+    setText(event.target.value);
   };
   const clearText = () => {
-    setText(""); // Очищаем состояние (и поле)
+    setText("");
   };
 
   return (
@@ -33,18 +33,18 @@ function App() {
         </a>
       </div>
       <TextField
-        value={text} // Привязываем значение к состоянию
-        onChange={handleChange} // Обрабатываем изменение текста
+        value={text}
+        onChange={handleChange}
         label="Enter something"
         variant="outlined"
       />
       <div>
-        <Button onClick={addAchievement} variant="contained" color="primary">
-          Add achievement
+        <Button onClick={addWin} variant="contained" color="primary">
+          Add win
         </Button>
       </div>
       <div>
-        <p>Текущее значение: {achievements}</p>
+        <p>Current value: {wins}</p>
       </div>
     </>
   );
