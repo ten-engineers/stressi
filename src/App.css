@@ -40,3 +40,10 @@
 .read-the-docs {
   color: #888;
 }
+
+.theme-switcher {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+}
