@@ -1,11 +1,19 @@
 import { useState, useMemo, useEffect } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import { createTheme, ThemeProvider, CssBaseline } from "@mui/material";
-import { useMediaQuery, Switch, FormControlLabel } from "@mui/material";
+import {
+  useMediaQuery,
+  Switch,
+  FormControlLabel,
+  Box,
+  createTheme,
+  ThemeProvider,
+  CssBaseline,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
 
 function App() {
   // Set the light theme by default
@@ -34,19 +42,17 @@ function App() {
   );
 
   const [wins, setWins] = useState([]);
+  const [text, setText] = useState("");
 
   const addWin = () => {
-    setWins(wins + text);
-    clearText();
+    if (text.trim()) {
+      setWins([...wins, text]);
+      setText("");
+    }
   };
-
-  const [text, setText] = useState("");
 
   const handleChange = (event) => {
     setText(event.target.value);
-  };
-  const clearText = () => {
-    setText("");
   };
 
   return (
@@ -64,28 +70,43 @@ function App() {
         />
       </div>
 
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <TextField
-        value={text}
-        onChange={handleChange}
-        label="Enter something"
-        variant="outlined"
-      />
-      <div>
-        <Button onClick={addWin} variant="contained" color="primary">
+      <Box display="flex" flexDirection="column" gap={2}>
+        <TextField
+          value={text}
+          onChange={handleChange}
+          label="Enter your win..."
+          variant="outlined"
+          sx={{ width: { xs: "100%", sm: "300px" } }}
+        />
+        <Button
+          onClick={addWin}
+          variant="contained"
+          color="primary"
+          sx={{
+            width: { xs: "100%", sm: "300px" },
+            height: "56px",
+          }}
+        >
           Add win
         </Button>
-      </div>
-      <div>
-        <p>Current value: {wins}</p>
-      </div>
+      </Box>
+
+      <Box mt={3}>
+        {wins.length > 0 ? (
+          <>
+            <h3>Your wins today:</h3>
+            <List>
+              {wins.map((win, index) => (
+                <ListItem key={index}>
+                  <ListItemText primary={`${index + 1}. ${win}`} />
+                </ListItem>
+              ))}
+            </List>
+          </>
+        ) : (
+          <h3>Add your first win</h3>
+        )}
+      </Box>
     </ThemeProvider>
   );
 }
