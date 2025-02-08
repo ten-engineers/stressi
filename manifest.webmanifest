@@ -1,0 +1,1 @@
+{"name":"Stressi App","short_name":"Stressi","start_url":"/stressi/","display":"standalone","background_color":"#ffffff","lang":"en","scope":"/stressi/","description":"Offline-capable Vite + React app","theme_color":"#ffffff","icons":[{"src":"/icon-192x192.png","sizes":"192x192","type":"image/png"},{"src":"/icon-512x512.png","sizes":"512x512","type":"image/png"}]}
