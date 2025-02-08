@@ -16,31 +16,28 @@ import {
 } from "@mui/material";
 
 function App() {
-  // Set the light theme by default
+  // Theme Management
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
-
   const [darkMode, setDarkMode] = useState(() => {
     const storedTheme = localStorage.getItem("theme");
-    // If there is no data in localStorage, use the system preference or light theme by default
-    return storedTheme ? storedTheme === "dark" : prefersDarkMode; // Use system preference if no stored theme
+    return storedTheme ? storedTheme === "dark" : prefersDarkMode;
   });
 
-  // Save the selected theme in localStorage
   useEffect(() => {
     localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
 
-  // Create MUI theme
   const theme = useMemo(
     () =>
       createTheme({
         palette: {
-          mode: darkMode ? "dark" : "light", // Switch the theme based on the darkMode state
+          mode: darkMode ? "dark" : "light",
         },
       }),
     [darkMode]
   );
 
+  // Wins State
   const [wins, setWins] = useState([]);
   const [text, setText] = useState("");
 
@@ -53,6 +50,39 @@ function App() {
 
   const handleChange = (event) => {
     setText(event.target.value);
+  };
+
+  // Custom Install Prompt State
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isInstallable, setIsInstallable] = useState(true);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setIsInstallable(true); // Show the "Install App" button
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstallClick = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === "accepted") {
+          console.log("App installed successfully!");
+        } else {
+          console.log("App installation dismissed.");
+        }
+        setDeferredPrompt(null);
+        setIsInstallable(false); // Hide the "Install App" button after the action
+      });
+    }
   };
 
   return (
@@ -69,6 +99,18 @@ function App() {
           label="Dark Mode"
         />
       </div>
+
+      {/* ✅ Install App Button */}
+      {isInstallable && (
+        <Button
+          variant="outlined"
+          color="secondary"
+          onClick={handleInstallClick}
+          sx={{ marginBottom: 2 }}
+        >
+          Install App
+        </Button>
+      )}
 
       <Box display="flex" flexDirection="column" gap={2}>
         <TextField

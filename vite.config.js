@@ -12,6 +12,10 @@ export default defineConfig({
         short_name: 'Stressi',
         description: 'Offline-capable Vite + React app',
         theme_color: '#ffffff',
+        background_color: '#ffffff',         // ✅ Background color for splash screens
+        display: 'standalone',               // ✅ Makes it run like a native app
+        orientation: 'portrait',             // ✅ Locks the orientation to portrait
+        start_url: '/',                      // ✅ Defines the launch URL when opened
         icons: [
           {
             src: '/icon-192x192.png',
@@ -22,6 +26,12 @@ export default defineConfig({
             src: '/icon-512x512.png',
             sizes: '512x512',
             type: 'image/png',
+          },
+          {
+            src: '/icon-512x512-maskable.png',  // ✅ Maskable icon for better Android support
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
           },
         ],
       },
