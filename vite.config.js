@@ -15,7 +15,7 @@ export default defineConfig({
         background_color: '#ffffff',         // ✅ Background color for splash screens
         display: 'standalone',               // ✅ Makes it run like a native app
         orientation: 'portrait',             // ✅ Locks the orientation to portrait
-        start_url: '/',                      // ✅ Defines the launch URL when opened
+        start_url: '/stressi/',                      // ✅ Defines the launch URL when opened
         icons: [
           {
             src: '/icon-192x192.png',
