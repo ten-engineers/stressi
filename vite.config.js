@@ -16,6 +16,7 @@ export default defineConfig({
         display: 'standalone',               // ✅ Makes it run like a native app
         orientation: 'portrait',             // ✅ Locks the orientation to portrait
         start_url: '/stressi/',                      // ✅ Defines the launch URL when opened
+        scope: '/stressi/',
         icons: [
           {
             src: '/icon-192x192.png',
