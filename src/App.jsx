@@ -23,9 +23,21 @@ function App() {
     return storedTheme ? storedTheme === "dark" : prefersDarkMode;
   });
 
+  const [wins, setWins] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("wins")) || [];
+    } catch {
+      return [];
+    }
+  });
+
   useEffect(() => {
     localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
+
+  useEffect(() => {
+    localStorage.setItem("wins", JSON.stringify(wins));
+  }, [wins]);
 
   const theme = useMemo(
     () =>
@@ -38,7 +50,7 @@ function App() {
   );
 
   // Wins State
-  const [wins, setWins] = useState([]);
+
   const [text, setText] = useState("");
 
   const addWin = () => {
@@ -71,7 +83,10 @@ function App() {
       window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
 
       return () => {
-        window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+        window.removeEventListener(
+          "beforeinstallprompt",
+          handleBeforeInstallPrompt
+        );
       };
     }
   }, []);
