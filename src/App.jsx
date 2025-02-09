@@ -54,20 +54,26 @@ function App() {
 
   // Custom Install Prompt State
   const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const [isInstallable, setIsInstallable] = useState(true);
+  const [isInstallable, setIsInstallable] = useState(false);
 
   useEffect(() => {
-    const handleBeforeInstallPrompt = (e) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-      setIsInstallable(true); // Show the "Install App" button
-    };
+    const isStandalone =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone;
 
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    if (!isStandalone) {
+      const handleBeforeInstallPrompt = (e) => {
+        e.preventDefault();
+        setDeferredPrompt(e);
+        setIsInstallable(true); // Show the "Install App" button
+      };
 
-    return () => {
-      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-    };
+      window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+
+      return () => {
+        window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+      };
+    }
   }, []);
 
   const handleInstallClick = () => {
