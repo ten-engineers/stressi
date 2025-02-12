@@ -13,7 +13,9 @@ import {
   List,
   ListItem,
   ListItemText,
+  IconButton,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function App() {
   // Theme Management
@@ -58,6 +60,11 @@ function App() {
       setWins([...wins, text]);
       setText("");
     }
+  };
+
+  const removeWin = (index) => {
+    setWins(wins.filter((_, i) => i !== index));
+    setTimeout(() => document.activeElement.blur(), 100); // Remove button focus after a short delay
   };
 
   const handleChange = (event) => {
@@ -160,7 +167,18 @@ function App() {
             <h3>Your wins today:</h3>
             <List>
               {wins.map((win, index) => (
-                <ListItem key={index}>
+                <ListItem
+                  key={index}
+                  secondaryAction={
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => removeWin(index)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  }
+                >
                   <ListItemText primary={`${index + 1}. ${win}`} />
                 </ListItem>
               ))}
