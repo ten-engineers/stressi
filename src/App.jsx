@@ -54,11 +54,15 @@ function App() {
   // Wins State
 
   const [text, setText] = useState("");
+  const [error, setError] = useState(false);
 
   const addWin = () => {
     if (text.trim()) {
       setWins([...wins, text]);
       setText("");
+      setError(false);
+    } else {
+      setError(true);
     }
   };
 
@@ -69,6 +73,7 @@ function App() {
 
   const handleChange = (event) => {
     setText(event.target.value);
+    if (error) setError(false); // Remove the input error
   };
 
   // Custom Install Prompt State
@@ -144,8 +149,15 @@ function App() {
         <TextField
           value={text}
           onChange={handleChange}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault(); // prevent line breaks
+              addWin();
+            }
+          }}
           label="Enter your win..."
           variant="outlined"
+          error={error} // show red error color
           sx={{ width: { xs: "100%", sm: "300px" } }}
         />
         <Button
