@@ -14,6 +14,8 @@ import {
   ListItem,
   ListItemText,
   IconButton,
+  Paper,
+  ListSubheader,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -58,7 +60,11 @@ function App() {
 
   const addWin = () => {
     if (text.trim()) {
-      setWins([...wins, text]);
+      setWins([
+        ...wins,
+        { id: Date.now(), text, date: new Date().toISOString().split("T")[0] }, // Store each win with a date in "YYYY-MM-DD" format.
+      ]);
+
       setText("");
       setError(false);
     } else {
@@ -66,8 +72,9 @@ function App() {
     }
   };
 
-  const removeWin = (index) => {
-    setWins(wins.filter((_, i) => i !== index));
+  // Remove a win by its unique ID
+  const removeWin = (id) => {
+    setWins(wins.filter((win) => win.id !== id));
     setTimeout(() => document.activeElement.blur(), 100); // Remove button focus after a short delay
   };
 
@@ -117,6 +124,13 @@ function App() {
       });
     }
   };
+
+  // Group wins by date to display them in sections.
+  const groupedWins = wins.reduce((acc, win) => {
+    acc[win.date] = acc[win.date] || [];
+    acc[win.date].push(win);
+    return acc;
+  }, {});
 
   return (
     <ThemeProvider theme={theme}>
@@ -178,21 +192,32 @@ function App() {
           <>
             <h3>Your wins today:</h3>
             <List>
-              {wins.map((win, index) => (
-                <ListItem
-                  key={index}
-                  secondaryAction={
-                    <IconButton
-                      edge="end"
-                      aria-label="delete"
-                      onClick={() => removeWin(index)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  }
+              {/* Render wins grouped by date, each inside a Paper container with a header. */}
+              {Object.entries(groupedWins).map(([date, wins]) => (
+                <Paper
+                  key={date}
+                  sx={{ mb: 2, p: 2, border: "1px solid gray" }}
                 >
-                  <ListItemText primary={`${index + 1}. ${win}`} />
-                </ListItem>
+                  <ListSubheader sx={{ fontWeight: "bold" }}>
+                    {new Date(date).toLocaleDateString("ru-RU")}
+                  </ListSubheader>
+                  {wins.map((win, index) => (
+                    <ListItem
+                      key={index}
+                      secondaryAction={
+                        <IconButton
+                          edge="end"
+                          aria-label="delete"
+                          onClick={() => removeWin(win.id)} // Find the correct index for deletion within the full wins list.
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      }
+                    >
+                      <ListItemText primary={`${index + 1}. ${win.text}`} />
+                    </ListItem>
+                  ))}
+                </Paper>
               ))}
             </List>
           </>
