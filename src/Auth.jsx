@@ -8,11 +8,17 @@ export default function Auth({ onLogin, darkMode, setDarkMode }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
 
   const handleSignup = async () => {
+    setError('');
+    setMessage('');
     const { error } = await supabase.auth.signUp({ email, password });
-    if (error) setError(error.message);
-    else onLogin();
+    if (error) {
+      setError(error.message);
+    } else {
+      setMessage('Please check your email to confirm registration');
+    }
   };
 
   const handleLogin = async () => {
@@ -40,6 +46,7 @@ export default function Auth({ onLogin, darkMode, setDarkMode }) {
           onChange={(e) => setPassword(e.target.value)}
         />
         {error && <Typography color="error">{error}</Typography>}
+        {message && <Typography color="primary">{message}</Typography>}
         <Button variant="contained" onClick={handleLogin}>Log In</Button>
         <Button variant="outlined" onClick={handleSignup}>Register</Button>
         <Button variant="outlined" onClick={handleGoogleLogin}>Login with Google</Button>
