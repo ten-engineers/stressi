@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { supabase } from './supabaseClient';
+import Auth from "./Auth";
 
 function App() {
   // Theme Management
@@ -58,6 +59,23 @@ function App() {
 
   const [text, setText] = useState("");
   const [error, setError] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
 
   const addWin = () => {
     if (text.trim()) {
@@ -133,6 +151,10 @@ function App() {
     return acc;
   }, {});
 
+  if (!user) {
+    return <Auth onLogin={() => {}} />;
+  }
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -146,6 +168,9 @@ function App() {
           }
           label="Dark Mode"
         />
+        <Button onClick={handleLogout} variant="outlined" sx={{ marginLeft: "auto" }}>
+          Logout
+        </Button>
       </div>
 
       {/* ✅ Install App Button */}

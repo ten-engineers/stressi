@@ -1,0 +1,47 @@
+import { useState } from 'react';
+import { supabase } from './supabaseClient';
+import { Button, TextField, Box, Typography } from '@mui/material';
+
+export default function Auth({ onLogin }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSignup = async () => {
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) setError(error.message);
+    else onLogin();
+  };
+
+  const handleLogin = async () => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) setError(error.message);
+    else onLogin();
+  };
+
+  const handleGoogleLogin = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+    });
+  };
+
+  return (
+    <Box display="flex" flexDirection="column" gap={2} maxWidth="300px" margin="auto" mt={5}>
+      <Typography variant="h5">Login / Register</Typography>
+
+      <TextField label="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+      <TextField
+        label="Password"
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+
+      {error && <Typography color="error">{error}</Typography>}
+
+      <Button variant="contained" onClick={handleLogin}>Log In</Button>
+      <Button variant="outlined" onClick={handleSignup}>Register</Button>
+      <Button variant="outlined" onClick={handleGoogleLogin}>Login with Google</Button>
+    </Box>
+  );
+}
