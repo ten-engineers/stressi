@@ -4,8 +4,6 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import {
   useMediaQuery,
-  Switch,
-  FormControlLabel,
   Box,
   createTheme,
   ThemeProvider,
@@ -20,6 +18,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import { supabase } from './supabaseClient';
 import Auth from "./Auth";
+import ThemeSwitcher from "./ThemeSwitcher";
 
 function App() {
   // Theme Management
@@ -152,26 +151,18 @@ function App() {
   }, {});
 
   if (!user) {
-    return <Auth onLogin={() => {}} />;
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Auth onLogin={() => {}} darkMode={darkMode} setDarkMode={setDarkMode} />
+      </ThemeProvider>
+    );
   }
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <div className="theme-switcher">
-        <FormControlLabel
-          control={
-            <Switch
-              checked={darkMode}
-              onChange={() => setDarkMode(!darkMode)}
-            />
-          }
-          label="Dark Mode"
-        />
-        <Button onClick={handleLogout} variant="outlined" sx={{ marginLeft: "auto" }}>
-          Logout
-        </Button>
-      </div>
+      <ThemeSwitcher darkMode={darkMode} setDarkMode={setDarkMode} onLogout={handleLogout} />
 
       {/* ✅ Install App Button */}
       {isInstallable && (
