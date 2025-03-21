@@ -18,6 +18,7 @@ import {
   ListSubheader,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { supabase } from './supabaseClient';
 
 function App() {
   // Theme Management
