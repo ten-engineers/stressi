@@ -13,7 +13,16 @@ export default function Auth({ onLogin, darkMode, setDarkMode }) {
   const handleSignup = async () => {
     setError('');
     setMessage('');
-    const { error } = await supabase.auth.signUp({ email, password });
+
+    const redirectTo = import.meta.env.VITE_REDIRECT_URL || `${window.location.origin}/stressi`;
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: redirectTo
+      }
+    });
+    
     if (error) {
       setError(error.message);
     } else {
