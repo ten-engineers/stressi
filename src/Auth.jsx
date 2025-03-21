@@ -37,8 +37,13 @@ export default function Auth({ onLogin, darkMode, setDarkMode }) {
   };
 
   const handleGoogleLogin = async () => {
+    const redirectTo = import.meta.env.VITE_REDIRECT_URL || `${window.location.origin}/stressi`;
+
     await supabase.auth.signInWithOAuth({
       provider: 'google',
+      options: {
+        redirectTo
+      }
     });
   };
 
