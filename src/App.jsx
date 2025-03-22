@@ -19,6 +19,10 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { supabase } from './supabaseClient';
 import Auth from "./Auth";
 import ThemeSwitcher from "./ThemeSwitcher";
+import AES from "crypto-js/aes";
+import encUtf8 from "crypto-js/enc-utf8";
+import SHA256 from "crypto-js/sha256";
+import encHex from "crypto-js/enc-hex";
 
 function App() {
   // Theme Management
@@ -72,6 +76,14 @@ function App() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
+  const derivedKey = useMemo(() => {
+    if (!user) return null;
+ 
+    const salt = user.id;
+    const combined = `${user.email}:${salt}`;
+    return SHA256(combined).toString(encHex);
+  }, [user]);
+
   useEffect(() => {
     if (!user) return;
 
@@ -87,29 +99,44 @@ function App() {
         return;
       }
 
-      const formattedWins = data.map((win) => ({
-        id: win.id,
-        text: win.win_text,
-        date: win.created_at.split("T")[0],
-      }));
+      const formattedWins = data.map((win) => {
+        let decryptedText;
+        if (!derivedKey) return win; // Skip decrypting if derivedKey is not available
+        try {
+          const bytes = AES.decrypt(win.win_text, derivedKey);
+          decryptedText = bytes.toString(encUtf8);
+        } catch (err) {
+          console.error("Failed to decrypt win:", err.message);
+          decryptedText = "[Encrypted Text]";
+        }
+
+        return {
+          id: win.id,
+          text: decryptedText,
+          date: win.created_at.split("T")[0],
+        };
+      });
 
       setWins(formattedWins);
       localStorage.setItem("wins", JSON.stringify(formattedWins));
     };
 
     fetchWins();
-  }, [user]);
+  }, [user, derivedKey]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
   };
 
   const addWin = async () => {
+    if (!derivedKey) return; // Return early if derivedKey is not available
     if (text.trim()) {
+      const encryptedText = AES.encrypt(text.trim(), derivedKey).toString();
+
       const newWin = {
         id: crypto.randomUUID(), // generate local UUID
         user: user.id,
-        win_text: text.trim(),
+        win_text: encryptedText,
       };
 
       const { data, error } = await supabase
@@ -123,11 +150,20 @@ function App() {
       }
 
       const insertedWin = data[0];
+      let decryptedText;
+      try {
+        const bytes = AES.decrypt(insertedWin.win_text, derivedKey);
+        decryptedText = bytes.toString(encUtf8);
+      } catch (err) {
+        console.error("Decryption failed after insert:", err.message);
+        decryptedText = "[Encrypted Text]";
+      }
+
       const updatedWins = [
         ...wins,
         {
           id: insertedWin.id,
-          text: insertedWin.win_text,
+          text: decryptedText,
           date: insertedWin.created_at.split("T")[0],
         },
       ];
