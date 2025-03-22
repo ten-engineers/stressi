@@ -142,11 +142,19 @@ function App() {
   };
 
   // Remove a win by its unique ID
-  const removeWin = (id) => {
+  const removeWin = async (id) => {
+    const { error } = await supabase.from("wins").delete().eq("id", id);
+
+    if (error) {
+      console.error("Error deleting win:", error.message);
+      alert("Failed to delete win. Please try again.");
+      return;
+    }
+
     const updatedWins = wins.filter((win) => win.id !== id);
     setWins(updatedWins);
     localStorage.setItem("wins", JSON.stringify(updatedWins));
-    setTimeout(() => document.activeElement.blur(), 100); // Remove button focus after a short delay
+    setTimeout(() => document.activeElement.blur(), 100);
   };
 
   const handleChange = (event) => {
