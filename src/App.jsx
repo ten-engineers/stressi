@@ -72,17 +72,68 @@ function App() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchWins = async () => {
+      const { data, error } = await supabase
+        .from("wins")
+        .select("*")
+        .eq("user", user.id)
+        .order("created_at", { ascending: true });
+
+      if (error) {
+        console.error("Error fetching wins:", error.message);
+        return;
+      }
+
+      const formattedWins = data.map((win) => ({
+        id: win.id,
+        text: win.win_text,
+        date: win.created_at.split("T")[0],
+      }));
+
+      setWins(formattedWins);
+      localStorage.setItem("wins", JSON.stringify(formattedWins));
+    };
+
+    fetchWins();
+  }, [user]);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
   };
 
-  const addWin = () => {
+  const addWin = async () => {
     if (text.trim()) {
-      setWins([
-        ...wins,
-        { id: Date.now(), text, date: new Date().toISOString().split("T")[0] }, // Store each win with a date in "YYYY-MM-DD" format.
-      ]);
+      const newWin = {
+        id: crypto.randomUUID(), // generate local UUID
+        user: user.id,
+        win_text: text.trim(),
+      };
 
+      const { data, error } = await supabase
+        .from("wins")
+        .insert([newWin])
+        .select();
+
+      if (error) {
+        console.error("Error inserting win:", error.message);
+        return;
+      }
+
+      const insertedWin = data[0];
+      const updatedWins = [
+        ...wins,
+        {
+          id: insertedWin.id,
+          text: insertedWin.win_text,
+          date: insertedWin.created_at.split("T")[0],
+        },
+      ];
+
+      setWins(updatedWins);
+      localStorage.setItem("wins", JSON.stringify(updatedWins));
       setText("");
       setError(false);
     } else {
@@ -92,7 +143,9 @@ function App() {
 
   // Remove a win by its unique ID
   const removeWin = (id) => {
-    setWins(wins.filter((win) => win.id !== id));
+    const updatedWins = wins.filter((win) => win.id !== id);
+    setWins(updatedWins);
+    localStorage.setItem("wins", JSON.stringify(updatedWins));
     setTimeout(() => document.activeElement.blur(), 100); // Remove button focus after a short delay
   };
 
