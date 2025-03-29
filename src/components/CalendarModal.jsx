@@ -187,7 +187,7 @@ const CalendarModal = ({ open, onClose, wins, initialDate, onDateSelect }) => {
         },
       }}
     >
-      <AppBar position="sticky" color="default" elevation={1}>
+      <AppBar position="sticky" color="default" elevation={0} sx={{ borderBottom: '1px solid', borderColor: 'divider' }}>
         <Toolbar>
           <IconButton edge="start" onClick={onClose} sx={{ mr: 2 }}>
             <ArrowBackIcon />

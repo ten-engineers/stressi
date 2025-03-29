@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import SendIcon from '@mui/icons-material/Send';
 import { supabase } from './supabaseClient';
 import Auth from "./Auth";
 import ThemeSwitcher from "./ThemeSwitcher";
@@ -288,7 +289,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AppBar position="fixed" color="default" elevation={1}>
+      <AppBar position="fixed" color="default" elevation={0} sx={{ borderBottom: '1px solid', borderColor: 'divider' }}>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Box sx={{ width: '100px' }} /> {/* Spacer to balance the right side */}
           <Typography variant="h6" component="div">
@@ -299,7 +300,6 @@ function App() {
           </Box>
         </Toolbar>
       </AppBar>
-      <Box sx={{ paddingBottom: "90px" }} />
       <Box sx={{ paddingTop: "64px" }} />
 
       {/* ✅ Install App Button */}
@@ -322,7 +322,8 @@ function App() {
           right: 0,
           display: "flex",
           alignItems: "center",
-          bgcolor: "background.default",
+          bgcolor: darkMode ? 'rgba(18, 18, 18, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+          backdropFilter: 'blur(8px)',
           padding: "10px 1rem",
           borderTop: "1px solid",
           borderColor: "divider",
@@ -338,36 +339,52 @@ function App() {
               addWin();
             }
           }}
-          label="Enter your win..."
+          placeholder="Enter your win..."
           variant="outlined"
           error={error}
           fullWidth
-          sx={{ flex: 1 }}
+          sx={{ 
+            flex: 1,
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': {
+                border: 'none'
+              }
+            }
+          }}
         />
         <Button
           onClick={addWin}
-          variant="contained"
+          variant="text"
           color="primary"
           sx={{
             height: "56px",
             marginLeft: 1,
+            minWidth: "56px",
+            padding: "0 16px",
           }}
         >
-          Add win
+          <SendIcon />
         </Button>
       </Box>
 
       <Box>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-          <h3>Your wins today:</h3>
-        </Box>
+        {wins.length > 0 && (
+          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+            <h3>Your wins today:</h3>
+          </Box>
+        )}
         {wins.length > 0 ? (
           <>
             <List>
               {Object.entries(groupedWins).map(([date, wins]) => (
                 <Paper
                   key={date}
-                  sx={{ mb: 2, p: 2, border: "1px solid gray" }}
+                  sx={{ 
+                    mb: 2, 
+                    p: 2,
+                    boxShadow: darkMode ? undefined : 'none',
+                    bgcolor: darkMode ? undefined : 'rgba(0, 0, 0, 0.02)'
+                  }}
                   data-date={date}
                 >
                   <ListSubheader 
