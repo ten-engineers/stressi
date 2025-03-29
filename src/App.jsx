@@ -452,6 +452,12 @@ function App() {
                     <ListItem
                       key={index}
                       onContextMenu={(event) => handleContextMenu(event, win)}
+                      onClick={(event) => {
+                        // Only show menu on tap for mobile devices
+                        if (window.innerWidth <= 600) {
+                          handleContextMenu(event, win);
+                        }
+                      }}
                     >
                       <ListItemText primary={`- ${win.text}`} />
                     </ListItem>
@@ -491,7 +497,7 @@ function App() {
             : undefined
         }
       >
-        <MenuItem onClick={handleCopy}>
+        <MenuItem onClick={handleCopy} disableRipple>
           <ListItemIcon>
             <ContentCopyIcon fontSize="small" />
           </ListItemIcon>
@@ -502,7 +508,7 @@ function App() {
             removeWin(selectedWin.id);
             handleCloseContextMenu();
           }
-        }}>
+        }} disableRipple>
           <ListItemIcon>
             <DeleteIcon fontSize="small" />
           </ListItemIcon>
