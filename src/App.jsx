@@ -17,10 +17,15 @@ import {
   AppBar,
   Toolbar,
   Typography,
+  Menu,
+  MenuItem,
+  ListItemIcon,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import SendIcon from '@mui/icons-material/Send';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import EditIcon from '@mui/icons-material/Edit';
 import { supabase } from './supabaseClient';
 import Auth from "./Auth";
 import ThemeSwitcher from "./ThemeSwitcher";
@@ -258,6 +263,39 @@ function App() {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
 
+  const [contextMenu, setContextMenu] = useState(null);
+  const [selectedWin, setSelectedWin] = useState(null);
+
+  const handleContextMenu = (event, win) => {
+    event.preventDefault();
+    setSelectedWin(win);
+    setContextMenu(
+      contextMenu === null
+        ? { mouseX: event.clientX - 2, mouseY: event.clientY - 4 }
+        : null,
+    );
+  };
+
+  const handleCloseContextMenu = () => {
+    setContextMenu(null);
+    setSelectedWin(null);
+  };
+
+  const handleCopy = () => {
+    if (selectedWin) {
+      navigator.clipboard.writeText(selectedWin.text);
+      handleCloseContextMenu();
+    }
+  };
+
+  const handleEdit = () => {
+    if (selectedWin) {
+      setText(selectedWin.text);
+      removeWin(selectedWin.id);
+      handleCloseContextMenu();
+    }
+  };
+
   if (isLoading) {
     return (
       <ThemeProvider theme={theme}>
@@ -393,6 +431,7 @@ function App() {
                       cursor: "pointer",
                       display: "flex",
                       alignItems: "center",
+                      borderRadius: "4px",
                       "&:hover": {
                         bgcolor: "action.hover",
                       },
@@ -412,17 +451,9 @@ function App() {
                   {wins.map((win, index) => (
                     <ListItem
                       key={index}
-                      secondaryAction={
-                        <IconButton
-                          edge="end"
-                          aria-label="delete"
-                          onClick={() => removeWin(win.id)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      }
+                      onContextMenu={(event) => handleContextMenu(event, win)}
                     >
-                      <ListItemText primary={`${index + 1}. ${win.text}`} />
+                      <ListItemText primary={`- ${win.text}`} />
                     </ListItem>
                   ))}
                 </Paper>
@@ -449,6 +480,35 @@ function App() {
           }
         }}
       />
+
+      <Menu
+        open={contextMenu !== null}
+        onClose={handleCloseContextMenu}
+        anchorReference="anchorPosition"
+        anchorPosition={
+          contextMenu !== null
+            ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+            : undefined
+        }
+      >
+        <MenuItem onClick={handleCopy}>
+          <ListItemIcon>
+            <ContentCopyIcon fontSize="small" />
+          </ListItemIcon>
+          Copy
+        </MenuItem>
+        <MenuItem onClick={() => {
+          if (selectedWin) {
+            removeWin(selectedWin.id);
+            handleCloseContextMenu();
+          }
+        }}>
+          <ListItemIcon>
+            <DeleteIcon fontSize="small" />
+          </ListItemIcon>
+          Delete
+        </MenuItem>
+      </Menu>
     </ThemeProvider>
   );
 }
