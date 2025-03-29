@@ -259,6 +259,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <Box sx={{ paddingBottom: "90px" }} />
       <ThemeSwitcher darkMode={darkMode} setDarkMode={setDarkMode} onLogout={handleLogout} />
 
       {/* ✅ Install App Button */}
@@ -273,28 +274,43 @@ function App() {
         </Button>
       )}
 
-      <Box display="flex" flexDirection="column" gap={2}>
+      <Box
+        sx={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          display: "flex",
+          alignItems: "center",
+          bgcolor: "background.default",
+          padding: "10px 1rem",
+          borderTop: "1px solid",
+          borderColor: "divider",
+          zIndex: 1000,
+        }}
+      >
         <TextField
           value={text}
           onChange={handleChange}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              e.preventDefault(); // prevent line breaks
+              e.preventDefault();
               addWin();
             }
           }}
           label="Enter your win..."
           variant="outlined"
-          error={error} // show red error color
-          sx={{ width: { xs: "100%", sm: "300px" } }}
+          error={error}
+          fullWidth
+          sx={{ flex: 1 }}
         />
         <Button
           onClick={addWin}
           variant="contained"
           color="primary"
           sx={{
-            width: { xs: "100%", sm: "300px" },
             height: "56px",
+            marginLeft: 1,
           }}
         >
           Add win
