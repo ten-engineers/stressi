@@ -14,15 +14,21 @@ import {
   IconButton,
   Paper,
   ListSubheader,
+  AppBar,
+  Toolbar,
+  Typography,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { supabase } from './supabaseClient';
 import Auth from "./Auth";
 import ThemeSwitcher from "./ThemeSwitcher";
+import CalendarModal from "./components/CalendarModal";
 import AES from "crypto-js/aes";
 import encUtf8 from "crypto-js/enc-utf8";
 import SHA256 from "crypto-js/sha256";
 import encHex from "crypto-js/enc-hex";
+import { format } from "date-fns";
 
 function App() {
   // Theme Management
@@ -59,14 +65,15 @@ function App() {
   );
 
   // Wins State
-
   const [text, setText] = useState("");
   const [error, setError] = useState(false);
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
+      setIsLoading(false);
     });
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -247,6 +254,28 @@ function App() {
     return acc;
   }, {});
 
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  if (isLoading) {
+    return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Box 
+          sx={{ 
+            height: '100vh', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            bgcolor: 'background.default'
+          }}
+        >
+          <Typography>Loading...</Typography>
+        </Box>
+      </ThemeProvider>
+    );
+  }
+
   if (!user) {
     return (
       <ThemeProvider theme={theme}>
@@ -259,8 +288,19 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <AppBar position="fixed" color="default" elevation={1}>
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          <Box sx={{ width: '100px' }} /> {/* Spacer to balance the right side */}
+          <Typography variant="h6" component="div">
+            Stressi
+          </Typography>
+          <Box sx={{ width: '100px', display: 'flex', justifyContent: 'flex-end' }}>
+            <ThemeSwitcher darkMode={darkMode} setDarkMode={setDarkMode} onLogout={handleLogout} />
+          </Box>
+        </Toolbar>
+      </AppBar>
       <Box sx={{ paddingBottom: "90px" }} />
-      <ThemeSwitcher darkMode={darkMode} setDarkMode={setDarkMode} onLogout={handleLogout} />
+      <Box sx={{ paddingTop: "64px" }} />
 
       {/* ✅ Install App Button */}
       {isInstallable && (
@@ -317,19 +357,40 @@ function App() {
         </Button>
       </Box>
 
-      <Box mt={3}>
+      <Box>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+          <h3>Your wins today:</h3>
+        </Box>
         {wins.length > 0 ? (
           <>
-            <h3>Your wins today:</h3>
             <List>
-              {/* Render wins grouped by date, each inside a Paper container with a header. */}
               {Object.entries(groupedWins).map(([date, wins]) => (
                 <Paper
                   key={date}
                   sx={{ mb: 2, p: 2, border: "1px solid gray" }}
+                  data-date={date}
                 >
-                  <ListSubheader sx={{ fontWeight: "bold" }}>
-                    {new Date(date).toLocaleDateString("ru-RU")}
+                  <ListSubheader 
+                    sx={{ 
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      "&:hover": {
+                        bgcolor: "action.hover",
+                      },
+                    }}
+                    onClick={() => {
+                      setIsCalendarOpen(true);
+                      // Set the current date in the calendar to the clicked date
+                      const clickedDate = new Date(date);
+                      setCurrentDate(clickedDate);
+                    }}
+                  >
+                    {new Date(date).toLocaleDateString('en-US', { 
+                      month: 'long',
+                      day: 'numeric'
+                    })}
                   </ListSubheader>
                   {wins.map((win, index) => (
                     <ListItem
@@ -338,7 +399,7 @@ function App() {
                         <IconButton
                           edge="end"
                           aria-label="delete"
-                          onClick={() => removeWin(win.id)} // Find the correct index for deletion within the full wins list.
+                          onClick={() => removeWin(win.id)}
                         >
                           <DeleteIcon />
                         </IconButton>
@@ -355,6 +416,22 @@ function App() {
           <h3>Add your first win</h3>
         )}
       </Box>
+
+      <CalendarModal
+        open={isCalendarOpen}
+        onClose={() => setIsCalendarOpen(false)}
+        wins={wins}
+        initialDate={currentDate}
+        onDateSelect={(selectedDate) => {
+          // Find the list item with the selected date
+          const dateString = format(selectedDate, 'yyyy-MM-dd');
+          const listItem = document.querySelector(`[data-date="${dateString}"]`);
+          if (listItem) {
+            // Scroll the element into view
+            listItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }}
+      />
     </ThemeProvider>
   );
 }

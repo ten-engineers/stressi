@@ -1,24 +1,28 @@
-import { FormControlLabel, Switch, Button, Box } from "@mui/material";
+import { IconButton, Button } from "@mui/material";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const ThemeSwitcher = ({ darkMode, setDarkMode, onLogout }) => {
   return (
-    <div className="theme-switcher">
-      <Box display="flex" justifyContent="space-between" alignItems="center" p={2}>
-        <FormControlLabel
-          control={
-            <Switch
-              checked={darkMode}
-              onChange={() => setDarkMode(!darkMode)}
-            />
-          }
-          label="Dark Mode"
-        />
-        {onLogout && (
-          <Button onClick={onLogout} variant="outlined">
-            Logout
-          </Button>
-        )}
-      </Box>
+    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+      <IconButton
+        onClick={() => setDarkMode(!darkMode)}
+        color="inherit"
+        size="small"
+      >
+        {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+      </IconButton>
+      {onLogout && (
+        <Button
+          onClick={onLogout}
+          color="inherit"
+          startIcon={<LogoutIcon />}
+          size="small"
+        >
+          Logout
+        </Button>
+      )}
     </div>
   );
 };

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { supabase } from './supabaseClient';
-import { Button, TextField, Box, Typography } from '@mui/material';
+import { Button, TextField, Box, Typography, AppBar, Toolbar } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import ThemeSwitcher from './ThemeSwitcher';
 
-export default function Auth({ onLogin, darkMode, setDarkMode }) {
+const Auth = ({ darkMode, setDarkMode }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -48,8 +48,28 @@ export default function Auth({ onLogin, darkMode, setDarkMode }) {
   };
 
   return (
-    <Box>
-      <ThemeSwitcher darkMode={darkMode} setDarkMode={setDarkMode} />
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "100vh",
+        padding: "20px",
+      }}
+    >
+      <AppBar position="fixed" color="default" elevation={1}>
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          <Box sx={{ width: '100px' }} /> {/* Spacer to balance the right side */}
+          <Typography variant="h6" component="div">
+            Stressi
+          </Typography>
+          <Box sx={{ width: '100px', display: 'flex', justifyContent: 'flex-end' }}>
+            <ThemeSwitcher darkMode={darkMode} setDarkMode={setDarkMode} />
+          </Box>
+        </Toolbar>
+      </AppBar>
+      <Box sx={{ paddingTop: "64px" }} />
       <Box display="flex" flexDirection="column" gap={2} maxWidth="300px" margin="auto" mt={5}>
         <Typography variant="h5">Login / Register</Typography>
         <TextField label="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -67,4 +87,6 @@ export default function Auth({ onLogin, darkMode, setDarkMode }) {
       </Box>
     </Box>
   );
-}
+};
+
+export default Auth;
