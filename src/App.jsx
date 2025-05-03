@@ -22,11 +22,11 @@ import {
   ListItemIcon,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import SendIcon from '@mui/icons-material/Send';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import EditIcon from '@mui/icons-material/Edit';
-import { supabase } from './supabaseClient';
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import SendIcon from "@mui/icons-material/Send";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import EditIcon from "@mui/icons-material/Edit";
+import { supabase } from "./supabaseClient";
 import Auth from "./Auth";
 import ThemeSwitcher from "./ThemeSwitcher";
 import CalendarModal from "./components/CalendarModal";
@@ -82,16 +82,18 @@ function App() {
       setIsLoading(false);
     });
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
 
     return () => listener.subscription.unsubscribe();
   }, []);
 
   const derivedKey = useMemo(() => {
     if (!user) return null;
- 
+
     const salt = user.id;
     const combined = `${user.email}:${salt}`;
     return SHA256(combined).toString(encHex);
@@ -272,7 +274,7 @@ function App() {
     setContextMenu(
       contextMenu === null
         ? { mouseX: event.clientX - 2, mouseY: event.clientY - 4 }
-        : null,
+        : null
     );
   };
 
@@ -300,13 +302,13 @@ function App() {
     return (
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Box 
-          sx={{ 
-            height: '100vh', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            bgcolor: 'background.default'
+        <Box
+          sx={{
+            height: "100vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            bgcolor: "background.default",
           }}
         >
           <Typography>Loading...</Typography>
@@ -319,7 +321,11 @@ function App() {
     return (
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Auth onLogin={() => {}} darkMode={darkMode} setDarkMode={setDarkMode} />
+        <Auth
+          onLogin={() => {}}
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+        />
       </ThemeProvider>
     );
   }
@@ -327,14 +333,26 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AppBar position="fixed" color="default" elevation={0} sx={{ borderBottom: '1px solid', borderColor: 'divider' }}>
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Box sx={{ width: '100px' }} /> {/* Spacer to balance the right side */}
+      <AppBar
+        position="fixed"
+        color="default"
+        elevation={0}
+        sx={{ borderBottom: "1px solid", borderColor: "divider" }}
+      >
+        <Toolbar sx={{ justifyContent: "space-between" }}>
+          <Box sx={{ width: "100px" }} />{" "}
+          {/* Spacer to balance the right side */}
           <Typography variant="h6" component="div">
             Stressi
           </Typography>
-          <Box sx={{ width: '100px', display: 'flex', justifyContent: 'flex-end' }}>
-            <ThemeSwitcher darkMode={darkMode} setDarkMode={setDarkMode} onLogout={handleLogout} />
+          <Box
+            sx={{ width: "100px", display: "flex", justifyContent: "flex-end" }}
+          >
+            <ThemeSwitcher
+              darkMode={darkMode}
+              setDarkMode={setDarkMode}
+              onLogout={handleLogout}
+            />
           </Box>
         </Toolbar>
       </AppBar>
@@ -360,8 +378,10 @@ function App() {
           right: 0,
           display: "flex",
           alignItems: "center",
-          bgcolor: darkMode ? 'rgba(18, 18, 18, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-          backdropFilter: 'blur(8px)',
+          bgcolor: darkMode
+            ? "rgba(18, 18, 18, 0.8)"
+            : "rgba(255, 255, 255, 0.8)",
+          backdropFilter: "blur(8px)",
           padding: "10px 1rem",
           borderTop: "1px solid",
           borderColor: "divider",
@@ -381,13 +401,13 @@ function App() {
           variant="outlined"
           error={error}
           fullWidth
-          sx={{ 
+          sx={{
             flex: 1,
-            '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                border: 'none'
-              }
-            }
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                border: "none",
+              },
+            },
           }}
         />
         <Button
@@ -407,7 +427,12 @@ function App() {
 
       <Box>
         {wins.length > 0 && (
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={2}
+          >
             <h3>Your wins today:</h3>
           </Box>
         )}
@@ -417,37 +442,14 @@ function App() {
               {Object.entries(groupedWins).map(([date, wins]) => (
                 <Paper
                   key={date}
-                  sx={{ 
-                    mb: 2, 
+                  sx={{
+                    mb: 2,
                     p: 2,
-                    boxShadow: darkMode ? undefined : 'none',
-                    bgcolor: darkMode ? undefined : 'rgba(0, 0, 0, 0.02)'
+                    boxShadow: darkMode ? undefined : "none",
+                    bgcolor: darkMode ? undefined : "rgba(0, 0, 0, 0.02)",
                   }}
                   data-date={date}
                 >
-                  <ListSubheader 
-                    sx={{ 
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      borderRadius: "4px",
-                      "&:hover": {
-                        bgcolor: "action.hover",
-                      },
-                    }}
-                    onClick={() => {
-                      setIsCalendarOpen(true);
-                      // Set the current date in the calendar to the clicked date
-                      const clickedDate = new Date(date);
-                      setCurrentDate(clickedDate);
-                    }}
-                  >
-                    {new Date(date).toLocaleDateString('en-US', { 
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </ListSubheader>
                   {wins.map((win, index) => (
                     <ListItem
                       key={index}
@@ -459,9 +461,38 @@ function App() {
                         }
                       }}
                     >
-                      <ListItemText primary={`- ${win.text}`} />
+                      <ListItemText primary={`• ${win.text}`} />
                     </ListItem>
                   ))}
+                  <ListSubheader
+                    sx={{
+                      background: "transparent",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      borderRadius: "4px",
+                      marginLeft: "auto", // Сдвигает компонент вправо в родителе с display: flex
+                      width: "fit-content", // Чтобы фон был по размеру контента
+                      lineHeight: 1,
+                      px: 0.5, // Горизонтальный внутренний отступ (padding-inline)
+                      py: 0.5, // Вертикальный отступ
+                    }}
+                    onClick={() => {
+                      setIsCalendarOpen(true);
+                      // Set the current date in the calendar to the clicked date
+                      const clickedDate = new Date(date);
+                      setCurrentDate(clickedDate);
+                    }}
+                  >
+                    {(() => {
+                      const d = new Date(date);
+                      const day = String(d.getDate()).padStart(2, "0");
+                      const month = String(d.getMonth() + 1).padStart(2, "0");
+                      const year = String(d.getFullYear()).slice(2);
+                      return `${day}.${month}.${year}`;
+                    })()}
+                  </ListSubheader>
                 </Paper>
               ))}
             </List>
@@ -478,11 +509,13 @@ function App() {
         initialDate={currentDate}
         onDateSelect={(selectedDate) => {
           // Find the list item with the selected date
-          const dateString = format(selectedDate, 'yyyy-MM-dd');
-          const listItem = document.querySelector(`[data-date="${dateString}"]`);
+          const dateString = format(selectedDate, "yyyy-MM-dd");
+          const listItem = document.querySelector(
+            `[data-date="${dateString}"]`
+          );
           if (listItem) {
             // Scroll the element into view
-            listItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            listItem.scrollIntoView({ behavior: "smooth", block: "center" });
           }
         }}
       />
@@ -503,12 +536,15 @@ function App() {
           </ListItemIcon>
           Copy
         </MenuItem>
-        <MenuItem onClick={() => {
-          if (selectedWin) {
-            removeWin(selectedWin.id);
-            handleCloseContextMenu();
-          }
-        }} disableRipple>
+        <MenuItem
+          onClick={() => {
+            if (selectedWin) {
+              removeWin(selectedWin.id);
+              handleCloseContextMenu();
+            }
+          }}
+          disableRipple
+        >
           <ListItemIcon>
             <DeleteIcon fontSize="small" />
           </ListItemIcon>
