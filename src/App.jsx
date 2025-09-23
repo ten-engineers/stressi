@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import "./App.css";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -48,9 +48,7 @@ function App() {
     localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
 
-  useEffect(() => {
-    localStorage.setItem("wins", JSON.stringify(wins));
-  }, [wins]);
+  // Removed localStorage effect - now handled in addWin and removeWin functions only
 
   const theme = useMemo(
     () =>
@@ -66,7 +64,7 @@ function App() {
   const [text, setText] = useState("");
   const [error, setError] = useState(false);
 
-  const addWin = () => {
+  const addWin = useCallback(() => {
     if (text.trim()) {
       const newWin = {
         id: crypto.randomUUID(),
@@ -82,7 +80,7 @@ function App() {
     } else {
       setError(true);
     }
-  };
+  }, [text, wins]);
 
   // Remove a win by its unique ID
   const removeWin = (id) => {
@@ -92,10 +90,17 @@ function App() {
     setTimeout(() => document.activeElement.blur(), 100);
   };
 
-  const handleChange = (event) => {
+  const handleChange = useCallback((event) => {
     setText(event.target.value);
     if (error) setError(false); // Remove the input error
-  };
+  }, [error]);
+
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addWin();
+    }
+  }, [addWin]);
 
   // Custom Install Prompt State
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -139,12 +144,14 @@ function App() {
     }
   };
 
-  // Group wins by date to display them in sections.
-  const groupedWins = wins.reduce((acc, win) => {
-    acc[win.date] = acc[win.date] || [];
-    acc[win.date].push(win);
-    return acc;
-  }, {});
+  // Group wins by date to display them in sections - memoized for performance
+  const groupedWins = useMemo(() => {
+    return wins.reduce((acc, win) => {
+      acc[win.date] = acc[win.date] || [];
+      acc[win.date].push(win);
+      return acc;
+    }, {});
+  }, [wins]);
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -243,12 +250,7 @@ function App() {
         <TextField
           value={text}
           onChange={handleChange}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              addWin();
-            }
-          }}
+          onKeyDown={handleKeyDown}
           placeholder="Enter your win..."
           variant="outlined"
           error={error}

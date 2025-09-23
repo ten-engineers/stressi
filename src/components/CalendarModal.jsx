@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -23,15 +23,22 @@ import {
 } from "date-fns";
 
 const MonthGrid = ({ month, wins, initialDate, onDateSelect }) => {
-  const monthStart = startOfMonth(month);
-  const monthEnd = endOfMonth(month);
-  const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
+  // Memoize expensive calculations
+  const monthData = useMemo(() => {
+    const monthStart = startOfMonth(month);
+    const monthEnd = endOfMonth(month);
+    const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
+    
+    // Calculate empty cells at the start of the month
+    const firstDayOfMonth = monthStart.getDay(); // 0 for Sunday, 1 for Monday, etc.
+    const emptyStartCells = Array(firstDayOfMonth).fill(null);
+    
+    const datesWithWins = wins.map((win) => new Date(win.date));
+    
+    return { days, emptyStartCells, datesWithWins };
+  }, [month, wins]);
 
-  // Calculate empty cells at the start of the month
-  const firstDayOfMonth = monthStart.getDay(); // 0 for Sunday, 1 for Monday, etc.
-  const emptyStartCells = Array(firstDayOfMonth).fill(null);
-
-  const datesWithWins = wins.map((win) => new Date(win.date));
+  const { days, emptyStartCells, datesWithWins } = monthData;
 
   const getWinsForDate = (date) => {
     return wins.filter((win) => isSameDay(new Date(win.date), date));
@@ -129,14 +136,18 @@ const MonthGrid = ({ month, wins, initialDate, onDateSelect }) => {
 };
 
 const CalendarModal = ({ open, onClose, wins, initialDate, onDateSelect }) => {
-  // Calculate start date to show exactly 74 months (current month + 73 previous months)
-  const endDate = new Date();
-  const startDate = subMonths(endDate, 73); // Go back exactly 73 months
-
-  const months = eachMonthOfInterval({
-    start: startDate,
-    end: endDate,
-  }); // Older months first, current month last
+  // Memoize expensive date calculations - only run when modal opens
+  const months = useMemo(() => {
+    if (!open) return []; // Don't calculate when modal is closed
+    
+    const endDate = new Date();
+    const startDate = subMonths(endDate, 73); // Go back exactly 73 months
+    
+    return eachMonthOfInterval({
+      start: startDate,
+      end: endDate,
+    }); // Older months first, current month last
+  }, [open]); // Only recalculate when modal opens/closes
 
   // Create ref for the dialog content
   const dialogContentRef = useRef(null);
@@ -171,10 +182,6 @@ const CalendarModal = ({ open, onClose, wins, initialDate, onDateSelect }) => {
     onClose();
   };
 
-  // Log the months range for verification
-  console.log("Start date:", format(startDate, "MMMM yyyy"));
-  console.log("End date:", format(endDate, "MMMM yyyy"));
-  console.log("Total months:", months.length);
 
   return (
     <Dialog
