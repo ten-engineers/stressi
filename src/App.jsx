@@ -285,7 +285,7 @@ function App() {
             alignItems="center"
             mb={2}
           >
-            <h3>Your wins today:</h3>
+            <h3>Your wins:</h3>
           </Box>
         )}
         {wins.length > 0 ? (
