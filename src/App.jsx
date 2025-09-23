@@ -22,18 +22,10 @@ import {
   ListItemIcon,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import SendIcon from "@mui/icons-material/Send";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import EditIcon from "@mui/icons-material/Edit";
-import { supabase } from "./supabaseClient";
-import Auth from "./Auth";
 import ThemeSwitcher from "./ThemeSwitcher";
 import CalendarModal from "./components/CalendarModal";
-import AES from "crypto-js/aes";
-import encUtf8 from "crypto-js/enc-utf8";
-import SHA256 from "crypto-js/sha256";
-import encHex from "crypto-js/enc-hex";
 import { format } from "date-fns";
 
 function App() {
@@ -73,116 +65,16 @@ function App() {
   // Wins State
   const [text, setText] = useState("");
   const [error, setError] = useState(false);
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setIsLoading(false);
-    });
-
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-      }
-    );
-
-    return () => listener.subscription.unsubscribe();
-  }, []);
-
-  const derivedKey = useMemo(() => {
-    if (!user) return null;
-
-    const salt = user.id;
-    const combined = `${user.email}:${salt}`;
-    return SHA256(combined).toString(encHex);
-  }, [user]);
-
-  useEffect(() => {
-    if (!user) return;
-
-    const fetchWins = async () => {
-      const { data, error } = await supabase
-        .from("wins")
-        .select("*")
-        .eq("user", user.id)
-        .order("created_at", { ascending: true });
-
-      if (error) {
-        console.error("Error fetching wins:", error.message);
-        return;
-      }
-
-      const formattedWins = data.map((win) => {
-        let decryptedText;
-        if (!derivedKey) return win; // Skip decrypting if derivedKey is not available
-        try {
-          const bytes = AES.decrypt(win.win_text, derivedKey);
-          decryptedText = bytes.toString(encUtf8);
-        } catch (err) {
-          console.error("Failed to decrypt win:", err.message);
-          decryptedText = "[Encrypted Text]";
-        }
-
-        return {
-          id: win.id,
-          text: decryptedText,
-          date: win.created_at.split("T")[0],
-        };
-      });
-
-      setWins(formattedWins);
-      localStorage.setItem("wins", JSON.stringify(formattedWins));
-    };
-
-    fetchWins();
-  }, [user, derivedKey]);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-  };
-
-  const addWin = async () => {
-    if (!derivedKey) return; // Return early if derivedKey is not available
+  const addWin = () => {
     if (text.trim()) {
-      const encryptedText = AES.encrypt(text.trim(), derivedKey).toString();
-
       const newWin = {
-        id: crypto.randomUUID(), // generate local UUID
-        user: user.id,
-        win_text: encryptedText,
+        id: crypto.randomUUID(),
+        text: text.trim(),
+        date: new Date().toISOString().split("T")[0],
       };
 
-      const { data, error } = await supabase
-        .from("wins")
-        .insert([newWin])
-        .select();
-
-      if (error) {
-        console.error("Error inserting win:", error.message);
-        return;
-      }
-
-      const insertedWin = data[0];
-      let decryptedText;
-      try {
-        const bytes = AES.decrypt(insertedWin.win_text, derivedKey);
-        decryptedText = bytes.toString(encUtf8);
-      } catch (err) {
-        console.error("Decryption failed after insert:", err.message);
-        decryptedText = "[Encrypted Text]";
-      }
-
-      const updatedWins = [
-        ...wins,
-        {
-          id: insertedWin.id,
-          text: decryptedText,
-          date: insertedWin.created_at.split("T")[0],
-        },
-      ];
-
+      const updatedWins = [...wins, newWin];
       setWins(updatedWins);
       localStorage.setItem("wins", JSON.stringify(updatedWins));
       setText("");
@@ -193,15 +85,7 @@ function App() {
   };
 
   // Remove a win by its unique ID
-  const removeWin = async (id) => {
-    const { error } = await supabase.from("wins").delete().eq("id", id);
-
-    if (error) {
-      console.error("Error deleting win:", error.message);
-      alert("Failed to delete win. Please try again.");
-      return;
-    }
-
+  const removeWin = (id) => {
     const updatedWins = wins.filter((win) => win.id !== id);
     setWins(updatedWins);
     localStorage.setItem("wins", JSON.stringify(updatedWins));
@@ -298,37 +182,6 @@ function App() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Box
-          sx={{
-            height: "100vh",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            bgcolor: "background.default",
-          }}
-        >
-          <Typography>Loading...</Typography>
-        </Box>
-      </ThemeProvider>
-    );
-  }
-
-  if (!user) {
-    return (
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Auth
-          onLogin={() => {}}
-          darkMode={darkMode}
-          setDarkMode={setDarkMode}
-        />
-      </ThemeProvider>
-    );
-  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -351,7 +204,6 @@ function App() {
             <ThemeSwitcher
               darkMode={darkMode}
               setDarkMode={setDarkMode}
-              onLogout={handleLogout}
             />
           </Box>
         </Toolbar>
