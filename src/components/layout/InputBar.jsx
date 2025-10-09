@@ -6,7 +6,6 @@ const InputBar = ({
   text, 
   error, 
   darkMode, 
-  keyboardHeight, 
   onChange, 
   onKeyDown, 
   onSubmit,
@@ -29,15 +28,13 @@ const InputBar = ({
         borderTop: '1px solid',
         borderColor: 'divider',
         zIndex: 1300,
-        transform: keyboardHeight > 0 ? `translateY(-${keyboardHeight}px)` : 'translateY(0)',
-        transition: 'transform 0.2s ease-in-out',
       }}
     >
       <TextField
         value={text}
         onChange={onChange}
         onKeyDown={onKeyDown}
-        placeholder={isEditing ? "Edit your win here..." : "Enter your win here..."}
+        placeholder={isEditing ? "Edit your win..." : "Enter your win..."}
         variant="outlined"
         error={error}
         fullWidth
@@ -73,6 +70,10 @@ const InputBar = ({
           marginLeft: 1,
           minWidth: '56px',
           padding: '0 16px',
+          outline: 'none',
+          '&:focus': {
+            outline: 'none',
+          },
         }}
       >
         <SendIcon />

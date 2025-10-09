@@ -139,7 +139,6 @@ function App() {
         text={text}
         error={error}
         darkMode={darkMode}
-        keyboardHeight={keyboardHeight}
         onChange={handleChange}
         onKeyDown={handleKeyDownWithEdit}
         onSubmit={handleSubmit}

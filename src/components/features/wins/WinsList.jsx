@@ -17,7 +17,11 @@ const WinsList = ({
   };
 
   return (
-    <Box sx={{ px: { xs: 2, sm: 0 } }}>
+    <Box sx={{ 
+      px: { xs: 2, sm: 0 },
+      maxWidth: '800px',
+      margin: '0 auto'
+    }}>
       {Object.keys(groupedWins).length > 0 && (
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
           <h3>Your wins:</h3>

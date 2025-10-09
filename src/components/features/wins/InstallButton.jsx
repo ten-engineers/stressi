@@ -8,7 +8,7 @@ const InstallButton = ({ isInstallable, onInstall }) => {
       variant="outlined"
       color="secondary"
       onClick={onInstall}
-      sx={{ marginTop: '50px', marginBottom: 2 }}
+      sx={{ marginTop: '80px', marginBottom: 2 }}
     >
       Install App
     </Button>
