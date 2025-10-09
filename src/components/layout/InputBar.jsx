@@ -1,5 +1,6 @@
-import { Box, TextField, Button } from '@mui/material';
+import { Box, TextField, Button, IconButton } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
+import CloseIcon from '@mui/icons-material/Close';
 
 const InputBar = ({ 
   text, 
@@ -8,7 +9,9 @@ const InputBar = ({
   keyboardHeight, 
   onChange, 
   onKeyDown, 
-  onSubmit 
+  onSubmit,
+  isEditing = false,
+  onCancelEdit 
 }) => {
   return (
     <Box
@@ -33,7 +36,7 @@ const InputBar = ({
         value={text}
         onChange={onChange}
         onKeyDown={onKeyDown}
-        placeholder="Enter your win here..."
+        placeholder={isEditing ? "Edit your win..." : "Enter your win here..."}
         variant="outlined"
         error={error}
         fullWidth
@@ -46,6 +49,20 @@ const InputBar = ({
           },
         }}
       />
+      {isEditing && (
+        <IconButton
+          onClick={onCancelEdit}
+          color="default"
+          sx={{
+            height: '56px',
+            width: '56px',
+            marginLeft: 0.5,
+          }}
+          aria-label="Cancel edit"
+        >
+          <CloseIcon />
+        </IconButton>
+      )}
       <Button
         onClick={onSubmit}
         variant="text"

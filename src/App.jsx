@@ -23,8 +23,9 @@ function App() {
     error, 
     addWin, 
     removeWin, 
+    updateWinText,
     handleChange, 
-    handleKeyDown, 
+    setText,
     groupedWins 
   } = useWins();
   const { isInstallable, handleInstallClick } = useInstallPrompt();
@@ -35,6 +36,7 @@ function App() {
   const [selectedWin, setSelectedWin] = useState(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [editingWin, setEditingWin] = useState(null);
 
   // Context Menu Handlers
   const handleContextMenu = (event, win) => {
@@ -50,6 +52,34 @@ function App() {
   const handleCloseContextMenu = () => {
     setContextMenu(null);
     setSelectedWin(null);
+  };
+
+  const handleEdit = (win) => {
+    setEditingWin(win);
+    setText(win.text);
+    handleCloseContextMenu();
+  };
+
+  const handleSubmit = () => {
+    if (editingWin) {
+      updateWinText(editingWin.id, text);
+      setEditingWin(null);
+      setText('');
+    } else {
+      addWin();
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingWin(null);
+    setText('');
+  };
+
+  const handleKeyDownWithEdit = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSubmit();
+    }
   };
 
   // Calendar Handler
@@ -80,8 +110,10 @@ function App() {
         darkMode={darkMode}
         keyboardHeight={keyboardHeight}
         onChange={handleChange}
-        onKeyDown={handleKeyDown}
-        onSubmit={addWin}
+        onKeyDown={handleKeyDownWithEdit}
+        onSubmit={handleSubmit}
+        isEditing={!!editingWin}
+        onCancelEdit={handleCancelEdit}
       />
 
       <WinsList
@@ -105,6 +137,7 @@ function App() {
         selectedWin={selectedWin}
         onClose={handleCloseContextMenu}
         onDelete={removeWin}
+        onEdit={handleEdit}
       />
     </ThemeProvider>
   );

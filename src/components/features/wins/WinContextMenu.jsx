@@ -1,5 +1,6 @@
 import { Menu, MenuItem, ListItemIcon } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 const WinContextMenu = ({ 
@@ -7,11 +8,19 @@ const WinContextMenu = ({
   selectedWin, 
   onClose, 
   onCopy, 
+  onEdit,
   onDelete 
 }) => {
   const handleCopy = () => {
     if (selectedWin) {
       navigator.clipboard.writeText(selectedWin.text);
+      onClose();
+    }
+  };
+
+  const handleEdit = () => {
+    if (selectedWin) {
+      onEdit(selectedWin);
       onClose();
     }
   };
@@ -52,6 +61,12 @@ const WinContextMenu = ({
           <ContentCopyIcon fontSize="small" />
         </ListItemIcon>
         Copy
+      </MenuItem>
+      <MenuItem onClick={handleEdit} disableRipple>
+        <ListItemIcon>
+          <EditIcon fontSize="small" />
+        </ListItemIcon>
+        Edit
       </MenuItem>
       <MenuItem onClick={handleDelete} disableRipple>
         <ListItemIcon>
