@@ -20,7 +20,7 @@ export const generateImage = async (prompt) => {gpt-image-1
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-image-1',
+        model: 'dall-e-2',
         prompt: prompt,
         n: 1,
         size: '256x256',
