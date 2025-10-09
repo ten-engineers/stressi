@@ -24,7 +24,7 @@ const WinsList = ({
         </Box>
       )}
       {Object.keys(groupedWins).length > 0 ? (
-        <List sx={{ pb: '76px' }}>
+        <List sx={{ pb: '92px' }}>
           {Object.entries(groupedWins).map(([date, wins]) => (
             <Paper
               key={date}

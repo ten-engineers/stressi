@@ -17,7 +17,7 @@ const InputBar = ({
     <Box
       sx={{
         position: 'fixed',
-        bottom: keyboardHeight > 0 ? `${keyboardHeight}px` : 0,
+        bottom: 0,
         left: 0,
         right: 0,
         display: 'flex',
@@ -28,15 +28,16 @@ const InputBar = ({
         padding: '10px 1rem',
         borderTop: '1px solid',
         borderColor: 'divider',
-        zIndex: 1000,
-        transition: 'bottom 0.2s ease-in-out',
+        zIndex: 1300,
+        transform: keyboardHeight > 0 ? `translateY(-${keyboardHeight}px)` : 'translateY(0)',
+        transition: 'transform 0.2s ease-in-out',
       }}
     >
       <TextField
         value={text}
         onChange={onChange}
         onKeyDown={onKeyDown}
-        placeholder={isEditing ? "Edit your win..." : "Enter your win..."}
+        placeholder={isEditing ? "Edit your win here..." : "Enter your win here..."}
         variant="outlined"
         error={error}
         fullWidth

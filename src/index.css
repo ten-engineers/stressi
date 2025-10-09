@@ -31,6 +31,8 @@ body {
   height: 100vh;
   height: -webkit-fill-available;
   overflow-x: hidden;
+  position: fixed;
+  width: 100%;
 }
 
 /* Ensure full height on mobile */
