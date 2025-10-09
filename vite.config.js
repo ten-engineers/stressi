@@ -19,17 +19,17 @@ export default defineConfig({
         scope: '/stressi/',
         icons: [
           {
-            src: '/icon-192x192.png',
+            src: '/stressi_logo.png',
             sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: '/icon-512x512.png',
+            src: '/stressi_logo.png',
             sizes: '512x512',
             type: 'image/png',
           },
           {
-            src: '/icon-512x512-maskable.png',  // ✅ Maskable icon for better Android support
+            src: '/stressi_logo.png',  // ✅ Using stressi logo for maskable icon
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable',

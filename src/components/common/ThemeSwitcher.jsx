@@ -8,6 +8,13 @@ const ThemeSwitcher = ({ darkMode, setDarkMode }) => {
       onClick={() => setDarkMode(!darkMode)}
       color="inherit"
       size="small"
+      sx={{ 
+        width: 40, 
+        height: 40, 
+        padding: 1,
+        '&:focus': { outline: 'none' },
+        '&:active': { outline: 'none' }
+      }}
     >
       {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
     </IconButton>
