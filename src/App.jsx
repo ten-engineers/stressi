@@ -150,7 +150,7 @@ function App() {
       <Box sx={{ 
         paddingTop: '80px', 
         paddingBottom: '100px',
-        minHeight: '100vh'
+        height: 'calc(100vh - 180px)'
       }}>
         <WinsList
           groupedWins={groupedWins}
