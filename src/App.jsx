@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ThemeProvider, CssBaseline, Box } from '@mui/material';
+import { ThemeProvider, CssBaseline, Box, Snackbar, Alert } from '@mui/material';
 import { format } from 'date-fns';
 
 // Hooks
@@ -10,6 +10,9 @@ import { Header, InputBar } from './components/layout';
 
 // Feature Components
 import { WinsList, WinContextMenu, InstallButton, CalendarModal } from './components/features/wins';
+
+// Utils
+import { generateImage } from './utils';
 
 // Styles
 import './App.css';
@@ -24,6 +27,7 @@ function App() {
     addWin, 
     removeWin, 
     updateWinText,
+    updateWinImage,
     handleChange, 
     setText,
     groupedWins 
@@ -37,6 +41,8 @@ function App() {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [editingWin, setEditingWin] = useState(null);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'info' });
 
   // Context Menu Handlers
   const handleContextMenu = (event, win) => {
@@ -91,6 +97,33 @@ function App() {
     }
   };
 
+  // Image Generation Handler
+  const handleCreateImage = async (win) => {
+    setIsGeneratingImage(true);
+    try {
+      const imageUrl = await generateImage(win.text);
+      updateWinImage(win.id, imageUrl);
+      setSnackbar({
+        open: true,
+        message: 'Image generated successfully!',
+        severity: 'success'
+      });
+    } catch (error) {
+      console.error('Failed to generate image:', error);
+      setSnackbar({
+        open: true,
+        message: `Failed to generate image: ${error.message}`,
+        severity: 'error'
+      });
+    } finally {
+      setIsGeneratingImage(false);
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -142,7 +175,20 @@ function App() {
         onClose={handleCloseContextMenu}
         onDelete={removeWin}
         onEdit={handleEdit}
+        onCreateImage={handleCreateImage}
+        isGeneratingImage={isGeneratingImage}
       />
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 }

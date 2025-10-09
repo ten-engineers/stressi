@@ -45,8 +45,25 @@ const WinsList = ({
                       onContextMenu(event, win);
                     }
                   }}
-                  sx={{ cursor: 'pointer' }}
+                  sx={{ 
+                    cursor: 'pointer',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start'
+                  }}
                 >
+                  {win.image && (
+                    <Box 
+                      component="img" 
+                      src={win.image} 
+                      alt="Generated image"
+                      sx={{ 
+                        maxWidth: '100%',
+                        height: 'auto',
+                        mb: 1,
+                        borderRadius: '8px'
+                      }}
+                    />
+                  )}
                   <ListItemText primary={`• ${win.text}`} />
                 </ListItem>
               ))}

@@ -9,7 +9,8 @@ A Progressive Web App (PWA) for tracking your daily wins and achievements. Built
 - 📅 Calendar view of your wins
 - 💾 Offline support with PWA
 - 📱 Mobile-friendly with keyboard handling
-- 🔍 Context menu for managing wins
+- 🔍 Context menu for managing wins (Copy, Edit, Delete, Create Image)
+- 🎨 AI-powered image generation from win text (OpenAI DALL-E)
 - 📊 Grouped by date for easy viewing
 
 ## 🚀 Getting Started
@@ -25,6 +26,12 @@ npm install
 ```bash
 npm run dev
 ```
+
+### AI Image Generation
+
+The app includes AI-powered image generation using OpenAI's DALL-E 2 API. Simply right-click any win and select "Create an image" to generate a visual representation of your achievement!
+
+> **Note**: Image generation uses a shared test API key with limited credits for demo purposes.
 
 ### Build
 

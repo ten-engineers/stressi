@@ -4,4 +4,5 @@ export { useTheme } from './useTheme';
 export { useWins } from './useWins';
 export { useInstallPrompt } from './useInstallPrompt';
 export { useKeyboardHeight } from './useKeyboardHeight';
+export { useOpenAIKey } from './useOpenAIKey';
 

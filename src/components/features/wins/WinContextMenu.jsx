@@ -1,7 +1,8 @@
-import { Menu, MenuItem, ListItemIcon } from '@mui/material';
+import { Menu, MenuItem, ListItemIcon, CircularProgress } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ImageIcon from '@mui/icons-material/Image';
 
 const WinContextMenu = ({ 
   contextMenu, 
@@ -9,7 +10,9 @@ const WinContextMenu = ({
   onClose, 
   onCopy, 
   onEdit,
-  onDelete 
+  onDelete,
+  onCreateImage,
+  isGeneratingImage
 }) => {
   const handleCopy = () => {
     if (selectedWin) {
@@ -28,6 +31,13 @@ const WinContextMenu = ({
   const handleDelete = () => {
     if (selectedWin) {
       onDelete(selectedWin.id);
+      onClose();
+    }
+  };
+
+  const handleCreateImage = async () => {
+    if (selectedWin) {
+      await onCreateImage(selectedWin);
       onClose();
     }
   };
@@ -67,6 +77,16 @@ const WinContextMenu = ({
           <EditIcon fontSize="small" />
         </ListItemIcon>
         Edit
+      </MenuItem>
+      <MenuItem onClick={handleCreateImage} disableRipple disabled={isGeneratingImage}>
+        <ListItemIcon>
+          {isGeneratingImage ? (
+            <CircularProgress size={20} />
+          ) : (
+            <ImageIcon fontSize="small" />
+          )}
+        </ListItemIcon>
+        Create an image
       </MenuItem>
       <MenuItem onClick={handleDelete} disableRipple>
         <ListItemIcon>

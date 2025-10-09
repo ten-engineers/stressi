@@ -40,6 +40,13 @@ export const useWins = () => {
     setWins(updatedWins);
   }, [wins, setWins]);
 
+  const updateWinImage = useCallback((id, imageUrl) => {
+    const updatedWins = wins.map((win) =>
+      win.id === id ? { ...win, image: imageUrl } : win
+    );
+    setWins(updatedWins);
+  }, [wins, setWins]);
+
   const handleChange = useCallback((event) => {
     setText(event.target.value);
     if (error) setError(false);
@@ -68,6 +75,7 @@ export const useWins = () => {
     addWin,
     removeWin,
     updateWinText,
+    updateWinImage,
     handleChange,
     handleKeyDown,
     setText,
