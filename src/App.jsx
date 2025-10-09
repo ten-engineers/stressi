@@ -96,8 +96,6 @@ function App() {
       <CssBaseline />
       
       <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-      
-      <Box sx={{ paddingTop: '64px' }} />
 
       <InstallButton 
         isInstallable={isInstallable} 
@@ -116,13 +114,19 @@ function App() {
         onCancelEdit={handleCancelEdit}
       />
 
-      <WinsList
-        groupedWins={groupedWins}
-        darkMode={darkMode}
-        onContextMenu={handleContextMenu}
-        setCurrentDate={setCurrentDate}
-        setIsCalendarOpen={setIsCalendarOpen}
-      />
+      <Box sx={{ 
+        marginTop: '80px', 
+        paddingBottom: '100px',
+        minHeight: 'calc(100vh - 180px)'
+      }}>
+        <WinsList
+          groupedWins={groupedWins}
+          darkMode={darkMode}
+          onContextMenu={handleContextMenu}
+          setCurrentDate={setCurrentDate}
+          setIsCalendarOpen={setIsCalendarOpen}
+        />
+      </Box>
 
       <CalendarModal
         open={isCalendarOpen}
