@@ -148,9 +148,9 @@ function App() {
       />
 
       <Box sx={{ 
-        marginTop: '80px', 
+        paddingTop: '80px', 
         paddingBottom: '100px',
-        minHeight: 'calc(100vh - 180px)'
+        minHeight: '100vh'
       }}>
         <WinsList
           groupedWins={groupedWins}
