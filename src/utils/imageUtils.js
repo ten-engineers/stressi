@@ -5,7 +5,7 @@ import { OPENAI_API_KEY } from '../constants';
  * @param {string} prompt - The text prompt to generate the image
  * @returns {Promise<string>} - The URL of the generated image
  */
-export const generateImage = async (prompt) => {gpt-image-1
+export const generateImage = async (prompt) => {
   if (!OPENAI_API_KEY) {
     throw new Error('OpenAI API key is not configured');
   }
@@ -20,7 +20,7 @@ export const generateImage = async (prompt) => {gpt-image-1
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'dall-e-2',
+        model: 'gpt-image-1',
         prompt: prompt,
         n: 1,
         size: '256x256',
