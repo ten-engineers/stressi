@@ -5,4 +5,5 @@ export { useWins } from './useWins';
 export { useInstallPrompt } from './useInstallPrompt';
 export { useKeyboardHeight } from './useKeyboardHeight';
 export { useOpenAIKey } from './useOpenAIKey';
+export { useWinImage } from './useWinImages';
 

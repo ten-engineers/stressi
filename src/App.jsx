@@ -101,8 +101,8 @@ function App() {
   const handleCreateImage = async (win) => {
     setIsGeneratingImage(true);
     try {
-      const imageUrl = await generateImage(win.text);
-      updateWinImage(win.id, imageUrl);
+      await generateImage(win.text, win.id);
+      updateWinImage(win.id, true);
       setSnackbar({
         open: true,
         message: 'Image generated successfully!',

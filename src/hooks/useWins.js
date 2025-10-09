@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useLocalStorage } from './useLocalStorage';
+import { deleteImageFromIndexedDB } from '../utils';
 
 /**
  * Custom hook for managing wins
@@ -27,9 +28,17 @@ export const useWins = () => {
     }
   }, [text, wins, setWins]);
 
-  const removeWin = useCallback((id) => {
+  const removeWin = useCallback(async (id) => {
     const updatedWins = wins.filter((win) => win.id !== id);
     setWins(updatedWins);
+    
+    // Delete associated image from IndexedDB
+    try {
+      await deleteImageFromIndexedDB(id);
+    } catch (error) {
+      console.error('Error deleting image from IndexedDB:', error);
+    }
+    
     setTimeout(() => document.activeElement.blur(), 100);
   }, [wins, setWins]);
 
@@ -40,9 +49,9 @@ export const useWins = () => {
     setWins(updatedWins);
   }, [wins, setWins]);
 
-  const updateWinImage = useCallback((id, imageUrl) => {
+  const updateWinImage = useCallback((id, hasImage) => {
     const updatedWins = wins.map((win) =>
-      win.id === id ? { ...win, image: imageUrl } : win
+      win.id === id ? { ...win, hasImage: hasImage } : win
     );
     setWins(updatedWins);
   }, [wins, setWins]);

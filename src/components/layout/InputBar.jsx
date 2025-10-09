@@ -36,7 +36,7 @@ const InputBar = ({
         value={text}
         onChange={onChange}
         onKeyDown={onKeyDown}
-        placeholder={isEditing ? "Edit your win..." : "Enter your win here..."}
+        placeholder={isEditing ? "Edit your win..." : "Enter your win..."}
         variant="outlined"
         error={error}
         fullWidth

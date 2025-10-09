@@ -1,5 +1,6 @@
-import { Box, List, Paper, ListItem, ListItemText, ListSubheader } from '@mui/material';
+import { Box, List, Paper, ListSubheader } from '@mui/material';
 import { formatDateShort } from '../../../utils';
+import WinItem from './WinItem';
 
 const WinsList = ({ 
   groupedWins, 
@@ -23,7 +24,7 @@ const WinsList = ({
         </Box>
       )}
       {Object.keys(groupedWins).length > 0 ? (
-        <List>
+        <List sx={{ pb: '76px' }}>
           {Object.entries(groupedWins).map(([date, wins]) => (
             <Paper
               key={date}
@@ -36,36 +37,11 @@ const WinsList = ({
               data-date={date}
             >
               {wins.map((win, index) => (
-                <ListItem
+                <WinItem
                   key={win.id || index}
-                  onContextMenu={(event) => onContextMenu(event, win)}
-                  onClick={(event) => {
-                    if (window.innerWidth <= 600) {
-                      event.preventDefault();
-                      onContextMenu(event, win);
-                    }
-                  }}
-                  sx={{ 
-                    cursor: 'pointer',
-                    flexDirection: 'column',
-                    alignItems: 'flex-start'
-                  }}
-                >
-                  {win.image && (
-                    <Box 
-                      component="img" 
-                      src={win.image} 
-                      alt="Generated image"
-                      sx={{ 
-                        maxWidth: '100%',
-                        height: 'auto',
-                        mb: 1,
-                        borderRadius: '8px'
-                      }}
-                    />
-                  )}
-                  <ListItemText primary={`• ${win.text}`} />
-                </ListItem>
+                  win={win}
+                  onContextMenu={onContextMenu}
+                />
               ))}
               <ListSubheader
                 sx={{
