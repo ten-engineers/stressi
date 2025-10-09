@@ -5,7 +5,6 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -28,6 +27,34 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  /* Mobile keyboard handling */
+  height: 100vh;
+  height: -webkit-fill-available;
+  overflow-x: hidden;
+}
+
+/* Ensure full height on mobile */
+html {
+  height: 100vh;
+  height: -webkit-fill-available;
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 768px) {
+  body {
+    /* Prevent zoom on input focus */
+    font-size: 16px;
+  }
+  
+  /* Better touch targets */
+  button, input, textarea, select {
+    min-height: 44px;
+  }
+  
+  /* Prevent horizontal scroll */
+  * {
+    max-width: 100%;
+  }
 }
 
 h1 {

@@ -189,11 +189,15 @@ const CalendarModal = ({ open, onClose, wins, initialDate, onDateSelect }) => {
       open={open}
       onClose={onClose}
       fullScreen
+      disableAutoFocus
+      disableEnforceFocus
+      disableRestoreFocus
       PaperProps={{
         sx: {
           bgcolor: "background.default",
           height: "100%",
         },
+        'aria-hidden': false
       }}
       TransitionProps={{
         onEntered: () => {

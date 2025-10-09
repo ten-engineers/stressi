@@ -1,0 +1,62 @@
+# Stressi Project Rules
+
+## File Organization
+
+### Component Placement
+- Reusable UI components → `src/components/common/`
+- Layout components (Header, Footer) → `src/components/layout/`
+- Feature-specific components → `src/components/features/[feature-name]/`
+
+### Logic Placement
+- Reusable hooks → `src/hooks/`
+- Pure utility functions → `src/utils/`
+- Constants and config → `src/constants/`
+
+### Always Create Index Files
+Every component folder should have an `index.js` that exports its components:
+```javascript
+export { default as ComponentName } from './ComponentName';
+```
+
+## Naming Conventions
+
+- Components: PascalCase (e.g., `MyComponent.jsx`)
+- Hooks: camelCase with 'use' prefix (e.g., `useMyHook.js`)
+- Utils: camelCase (e.g., `myUtils.js`)
+- Constants: UPPER_SNAKE_CASE for values, camelCase for files
+
+## Import Order
+
+1. React and external libraries
+2. Internal modules (hooks, utils, constants)
+3. Components
+4. Styles
+
+## Component Guidelines
+
+- Keep components under 200 lines
+- Extract complex logic to custom hooks
+- Use props for configuration
+- Add JSDoc comments for complex functions
+
+## State Management
+
+- Local UI state → `useState` in component
+- Feature state → Custom hook (e.g., `useWins`)
+- Global state → Context API (only when truly needed)
+
+## Performance
+
+- Use `useMemo` for expensive calculations
+- Use `useCallback` for functions passed as props
+- Avoid premature optimization
+
+## Documentation
+
+- Update PROJECT_STRUCTURE.md when adding new patterns
+- Add JSDoc comments for hooks and utils
+- Keep QUICK_START.md examples current
+
+## Prompt Aliases
+- "bb" npm run build && npm run deploy 
+- "pp" create human readable commit and push
