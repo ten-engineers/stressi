@@ -102,7 +102,7 @@ function App() {
     setIsGeneratingImage(true);
     try {
       await generateImage(win.text, win.id);
-      updateWinImage(win.id, true);
+      updateWinImage(win.id, true, Date.now()); // Pass timestamp to force image reload
       setSnackbar({
         open: true,
         message: 'Image generated successfully!',

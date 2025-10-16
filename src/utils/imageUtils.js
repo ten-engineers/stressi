@@ -23,11 +23,11 @@ export const generateImage = async (prompt, winId) => {
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'dall-e-2',
+        model: 'gpt-image-1-mini',
         prompt: prompt,
         n: 1,
-        size: '256x256',
-        response_format: 'b64_json', // Request base64 instead of URL
+        size: '1024x1024', // gpt-image-1-mini supports 1024x1024, 1536x1024, 1024x1536
+        quality: 'medium', // Options: low, standard, medium, high
       }),
     });
 
@@ -37,6 +37,8 @@ export const generateImage = async (prompt, winId) => {
     }
 
     const data = await response.json();
+    
+    // gpt-image-1-mini returns base64 data by default in b64_json field
     const base64Image = data.data[0].b64_json;
 
     // Convert base64 to blob

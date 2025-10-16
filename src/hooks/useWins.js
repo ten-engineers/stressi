@@ -49,9 +49,9 @@ export const useWins = () => {
     setWins(updatedWins);
   }, [wins, setWins]);
 
-  const updateWinImage = useCallback((id, hasImage) => {
+  const updateWinImage = useCallback((id, hasImage, imageVersion = Date.now()) => {
     const updatedWins = wins.map((win) =>
-      win.id === id ? { ...win, hasImage: hasImage } : win
+      win.id === id ? { ...win, hasImage: hasImage, imageVersion: imageVersion } : win
     );
     setWins(updatedWins);
   }, [wins, setWins]);

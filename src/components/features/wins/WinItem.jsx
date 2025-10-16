@@ -2,7 +2,7 @@ import { Box, ListItem, ListItemText } from '@mui/material';
 import { useWinImage } from '../../../hooks';
 
 const WinItem = ({ win, onContextMenu }) => {
-  const imageUrl = useWinImage(win.id, win.hasImage);
+  const imageUrl = useWinImage(win.id, win.hasImage, win.imageVersion);
 
   return (
     <ListItem
